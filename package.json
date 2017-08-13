@@ -1,0 +1,21 @@
+{
+  "name": "a1wp",
+  "version": "1.0.0",
+  "description": "AngularJS with Webpack",
+  "main": "app.js",
+  "dependencies": {
+    "@types/angular": "^1.6.16",
+    "awesome-typescript-loader": "^3.1.2",
+    "init": "^0.1.2",
+    "typescript": "^2.2.2",
+    "webpack": "^2.4.1",
+    "webpack-merge": "^4.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "webpack --config webpack.conf.js --progress --profile --colors --display-error-details",
+    "watch": "webpack --config webpack.conf.js --progress --profile --colors --display-error-details --watch"
+  },
+  "author": "Rosen Blagoev",
+  "license": "MIT"
+}
