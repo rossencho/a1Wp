@@ -14,8 +14,11 @@ export const taskWizardComponent: IComponentOptions = {
     template: `
     <div>
         <h1>Task Wizard</h1>
-        
+        <button ng-click="vm.onClose()">Close</button>
    </div>`,
-   controllerAs:"vm"
+   controllerAs:"vm",
+   bindings:{
+       onClose:'&'
+   }
     
 };

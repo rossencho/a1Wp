@@ -1,5 +1,6 @@
 
 import IComponentOptions = angular.IComponentOptions;
+import {ITaskWizardService} from "../taskWizard/taskWizard.service";
 
 class TasksComponent {
     private name: string;
@@ -7,7 +8,7 @@ class TasksComponent {
     private message:string;
     private timeHandler:any;
 
-    constructor(private $mdDialog: any, private $interval:any) { this.name = "Rosen Blagoev"; }
+    constructor(private $mdDialog: any, private $interval:any,private TaskWizardService:ITaskWizardService) { this.name = "Rosen Blagoev"; }
 
     public confirmTask(){
         console.log("Then fire confirm Task");
@@ -36,23 +37,7 @@ class TasksComponent {
 
     public openDialog(){
         this.stopRefresh();
-        this.$mdDialog.show({
-            controllerAs: 'model',
-            clickOutsideToClose: true,
-            bindToController: true,
-            controller: function(refresh:Function, $mdDialog:any){
-                this.hide = function(){
-                    refresh();
-                    $mdDialog.hide();
-                }
-            },
-            autoWrap: false,
-            template: '<md-dialog class="stickyDialog"  aria-label="wizard"><task-wizard ></task-wizard> <md-button ng-click="model.hide()">Close Popup</md-button></md-dialog>',
-            locals: {
-                thing: this.confirmTask,
-                refresh: this.startRefresh
-            }
-        })
+        this.TaskWizardService.showWizard(this.startRefresh);
     }
 
 }

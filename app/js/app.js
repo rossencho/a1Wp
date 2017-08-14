@@ -130,8 +130,11 @@ var TaskWizardComponent = (function () {
 }());
 exports.taskWizardComponent = {
     controller: TaskWizardComponent,
-    template: "\n    <div>\n        <h1>Task Wizard</h1>\n        \n   </div>",
-    controllerAs: "vm"
+    template: "\n    <div>\n        <h1>Task Wizard</h1>\n        <button ng-click=\"vm.onClose()\">Close</button>\n   </div>",
+    controllerAs: "vm",
+    bindings: {
+        onClose: '&'
+    }
 };
 
 
@@ -143,11 +146,13 @@ exports.taskWizardComponent = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var taskWizard_component_1 = __webpack_require__(3);
+var taskWizard_service_1 = __webpack_require__(7);
 exports.taskWizardModule = angular
     .module('taskWizardpModule', [
     'ngMaterial'
 ])
-    .component('taskWizard', taskWizard_component_1.taskWizardComponent);
+    .component('taskWizard', taskWizard_component_1.taskWizardComponent)
+    .service('TaskWizardService', taskWizard_service_1.TaskWizardService);
 
 
 /***/ }),
@@ -158,10 +163,11 @@ exports.taskWizardModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var TasksComponent = (function () {
-    function TasksComponent($mdDialog, $interval) {
+    function TasksComponent($mdDialog, $interval, TaskWizardService) {
         var _this = this;
         this.$mdDialog = $mdDialog;
         this.$interval = $interval;
+        this.TaskWizardService = TaskWizardService;
         this.refresh = function () {
             _this.message = 'refreshed ' + Math.random();
         };
@@ -184,23 +190,7 @@ var TasksComponent = (function () {
     };
     TasksComponent.prototype.openDialog = function () {
         this.stopRefresh();
-        this.$mdDialog.show({
-            controllerAs: 'model',
-            clickOutsideToClose: true,
-            bindToController: true,
-            controller: function (refresh, $mdDialog) {
-                this.hide = function () {
-                    refresh();
-                    $mdDialog.hide();
-                };
-            },
-            autoWrap: false,
-            template: '<md-dialog class="stickyDialog"  aria-label="wizard"><task-wizard ></task-wizard> <md-button ng-click="model.hide()">Close Popup</md-button></md-dialog>',
-            locals: {
-                thing: this.confirmTask,
-                refresh: this.startRefresh
-            }
-        });
+        this.TaskWizardService.showWizard(this.startRefresh);
     };
     return TasksComponent;
 }());
@@ -226,6 +216,40 @@ exports.tasksModule = angular
     taskWizard_module_1.taskWizardModule.name
 ])
     .component('tasks', tasks_component_1.tasksComponent);
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var TaskWizardService = (function () {
+    function TaskWizardService($mdDialog) {
+        this.$mdDialog = $mdDialog;
+    }
+    TaskWizardService.prototype.showWizard = function (cb) {
+        this.$mdDialog.show({
+            controllerAs: 'model',
+            clickOutsideToClose: true,
+            bindToController: true,
+            controller: function (refresh, $mdDialog) {
+                this.hide = function () {
+                    refresh();
+                    $mdDialog.hide();
+                };
+            },
+            autoWrap: false,
+            template: '<md-dialog class="stickyDialog"  aria-label="wizard"><task-wizard on-close="model.hide()"></task-wizard> </md-dialog>',
+            locals: {
+                refresh: cb
+            }
+        });
+    };
+    return TaskWizardService;
+}());
+exports.TaskWizardService = TaskWizardService;
 
 
 /***/ })
